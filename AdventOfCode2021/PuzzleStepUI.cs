@@ -43,7 +43,8 @@ namespace AdventOfCode2021
                         result = Content.SolvePartOne(dialog.Lines);
                     }
                     catch (Exception ex) { result = $"Error: {ex.Message}!"; }
-                    MessageBox.Show(this, $"Solve result: {result}", $"Day{Content.DayNumber:d2} Part One");
+
+                    SolvePart1Output.Text = result;
 
                 }
         }
@@ -63,7 +64,7 @@ namespace AdventOfCode2021
                         result = Content.SolvePartTwo(dialog.Lines);
                     }
                     catch (Exception ex) { result = $"Error: {ex.Message}!"; }
-                    MessageBox.Show(this, $"Solve result: {result}", $"Day{Content.DayNumber:d2} Part Two");
+                    SolvePart2Output.Text = result;
 
                 }
         }

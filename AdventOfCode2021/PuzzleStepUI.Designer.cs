@@ -37,6 +37,8 @@
             this.panel3 = new System.Windows.Forms.Panel();
             this.SolvePart2Button = new System.Windows.Forms.Button();
             this.TestPart2Button = new System.Windows.Forms.Button();
+            this.SolvePart1Output = new System.Windows.Forms.TextBox();
+            this.SolvePart2Output = new System.Windows.Forms.TextBox();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -61,7 +63,7 @@
             this.TitleLabel.Font = new System.Drawing.Font("Consolas", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.TitleLabel.Location = new System.Drawing.Point(57, 0);
             this.TitleLabel.Name = "TitleLabel";
-            this.TitleLabel.Size = new System.Drawing.Size(532, 60);
+            this.TitleLabel.Size = new System.Drawing.Size(732, 60);
             this.TitleLabel.TabIndex = 1;
             this.TitleLabel.Text = "title";
             this.TitleLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -83,7 +85,7 @@
             // SolvePart1Button
             // 
             this.SolvePart1Button.AutoSize = true;
-            this.SolvePart1Button.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SolvePart1Button.Dock = System.Windows.Forms.DockStyle.Left;
             this.SolvePart1Button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.SolvePart1Button.Font = new System.Drawing.Font("Consolas", 12F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.SolvePart1Button.ForeColor = System.Drawing.Color.Cyan;
@@ -96,12 +98,13 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.SolvePart1Output);
             this.panel1.Controls.Add(this.SolvePart1Button);
             this.panel1.Controls.Add(this.TestPart1Button);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(200, 30);
+            this.panel1.Size = new System.Drawing.Size(377, 30);
             this.panel1.TabIndex = 4;
             // 
             // panel2
@@ -109,25 +112,26 @@
             this.panel2.Controls.Add(this.panel3);
             this.panel2.Controls.Add(this.panel1);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(389, 0);
+            this.panel2.Location = new System.Drawing.Point(412, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(200, 60);
+            this.panel2.Size = new System.Drawing.Size(377, 60);
             this.panel2.TabIndex = 5;
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.SolvePart2Output);
             this.panel3.Controls.Add(this.SolvePart2Button);
             this.panel3.Controls.Add(this.TestPart2Button);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel3.Location = new System.Drawing.Point(0, 30);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(200, 30);
+            this.panel3.Size = new System.Drawing.Size(377, 30);
             this.panel3.TabIndex = 5;
             // 
             // SolvePart2Button
             // 
             this.SolvePart2Button.AutoSize = true;
-            this.SolvePart2Button.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SolvePart2Button.Dock = System.Windows.Forms.DockStyle.Left;
             this.SolvePart2Button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.SolvePart2Button.Font = new System.Drawing.Font("Consolas", 12F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.SolvePart2Button.ForeColor = System.Drawing.Color.Cyan;
@@ -152,6 +156,34 @@
             this.TestPart2Button.Text = "Test P2";
             this.TestPart2Button.UseVisualStyleBackColor = true;
             // 
+            // SolvePart1Output
+            // 
+            this.SolvePart1Output.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(72)))), ((int)(((byte)(72)))), ((int)(((byte)(72)))));
+            this.SolvePart1Output.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.SolvePart1Output.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SolvePart1Output.Font = new System.Drawing.Font("Consolas", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SolvePart1Output.ForeColor = System.Drawing.Color.White;
+            this.SolvePart1Output.Location = new System.Drawing.Point(200, 0);
+            this.SolvePart1Output.Name = "SolvePart1Output";
+            this.SolvePart1Output.ReadOnly = true;
+            this.SolvePart1Output.Size = new System.Drawing.Size(177, 32);
+            this.SolvePart1Output.TabIndex = 4;
+            this.SolvePart1Output.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // SolvePart2Output
+            // 
+            this.SolvePart2Output.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(72)))), ((int)(((byte)(72)))), ((int)(((byte)(72)))));
+            this.SolvePart2Output.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.SolvePart2Output.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SolvePart2Output.Font = new System.Drawing.Font("Consolas", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SolvePart2Output.ForeColor = System.Drawing.Color.White;
+            this.SolvePart2Output.Location = new System.Drawing.Point(200, 0);
+            this.SolvePart2Output.Name = "SolvePart2Output";
+            this.SolvePart2Output.ReadOnly = true;
+            this.SolvePart2Output.Size = new System.Drawing.Size(177, 32);
+            this.SolvePart2Output.TabIndex = 5;
+            this.SolvePart2Output.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
             // PuzzleStepUI
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -163,7 +195,7 @@
             this.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.Color.White;
             this.Name = "PuzzleStepUI";
-            this.Size = new System.Drawing.Size(589, 60);
+            this.Size = new System.Drawing.Size(789, 60);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
@@ -184,5 +216,7 @@
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Button SolvePart2Button;
         private System.Windows.Forms.Button TestPart2Button;
+        private System.Windows.Forms.TextBox SolvePart1Output;
+        private System.Windows.Forms.TextBox SolvePart2Output;
     }
 }

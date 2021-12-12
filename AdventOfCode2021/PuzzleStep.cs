@@ -73,7 +73,8 @@ namespace AdventOfCode2021
         internal static List<PuzzleStep> Create()
         {
             var output = new List<PuzzleStep>();
-            output.Add(new PuzzleStep(01, Day01_1SolveMethod, Day01_2SolveMethod, LoadTestInput("Day01TestInput"), "  7", "  5", "Sonar Sweep"));
+            output.Add(new PuzzleStep(01, Day01_1SolveMethod, Day01_2SolveMethod, LoadTestInput("Day01TestInput"), "7", "5", "Sonar Sweep"));
+            output.Add(new PuzzleStep(02, Day02_1SolveMethod, Day02_2SolveMethod, LoadTestInput("Day02TestInput"), "150", "900", "Dive!"));
             return output;
         }
 
@@ -106,23 +107,76 @@ namespace AdventOfCode2021
         }
         #endregion
 
-
+        #region Day01
         private static string Day01_1SolveMethod(IEnumerable<string> lines)
-        {           
+        {
             var digits = ToDigits(lines);
-            return CountIncreases(digits).ToString();            
+            return CountIncreases(digits).ToString();
         }
-
         private static string Day01_2SolveMethod(IEnumerable<string> lines)
         {
             var digits = ToDigits(lines);
             var slidings = new List<int>();
-            for (int i = 0; i < digits.Count-2; i++)
+            for (int i = 0; i < digits.Count - 2; i++)
             {
-                slidings.Add(digits[i]+ digits[i+1] + digits[i+2]);
+                slidings.Add(digits[i] + digits[i + 1] + digits[i + 2]);
             }
             return CountIncreases(slidings).ToString();
 
         }
+        #endregion
+
+        #region Day02
+        private static string Day02_1SolveMethod(IEnumerable<string> lines)
+        {
+            var forwardTotal = 0;
+            var depth = 0;
+            foreach (var line in lines)
+            {
+                if (line.StartsWith("forward"))
+                {
+                    var forward = int.Parse(line.Replace("forward", ""));
+                    forwardTotal += forward;
+                }
+                else if (line.StartsWith("down"))
+                {
+                    depth += int.Parse(line.Replace("down", ""));
+                }
+                else if (line.StartsWith("up"))
+                {
+                    depth -= int.Parse(line.Replace("up", ""));
+                }
+            }
+            return (forwardTotal * depth).ToString();
+        }
+        private static string Day02_2SolveMethod(IEnumerable<string> lines)
+        {
+            var forwardTotal = 0;
+            var aim = 0;
+            var depth = 0;
+            foreach (var line in lines)
+            {
+                if (line.StartsWith("forward"))
+                {
+                    var forward = int.Parse(line.Replace("forward", ""));
+                    forwardTotal += forward;
+
+                    if (aim != 0)
+                        depth += forward * aim;
+                }
+                else if (line.StartsWith("down"))
+                {
+                    aim += int.Parse(line.Replace("down", ""));
+                }
+                else if (line.StartsWith("up"))
+                {
+                    aim -= int.Parse(line.Replace("up", ""));
+                }
+                
+            }
+            return (forwardTotal * depth).ToString();
+        }
+        #endregion
+
     }
 }
