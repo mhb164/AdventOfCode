@@ -76,6 +76,7 @@ namespace AdventOfCode2021
             output.Add(new PuzzleStep(01, Day01_1SolveMethod, Day01_2SolveMethod, LoadTestInput("Day01TestInput"), "7", "5", "Sonar Sweep"));
             output.Add(new PuzzleStep(02, Day02_1SolveMethod, Day02_2SolveMethod, LoadTestInput("Day02TestInput"), "150", "900", "Dive!"));
             output.Add(new PuzzleStep(03, Day03_1SolveMethod, Day03_2SolveMethod, LoadTestInput("Day03TestInput"), "198", "230", "Binary Diagnostic"));
+            output.Add(new PuzzleStep(04, Day04_1SolveMethod, Day04_2SolveMethod, LoadTestInput("Day04TestInput"), "4512", "1924", "Giant Squid"));
             return output;
         }
 
@@ -248,6 +249,111 @@ namespace AdventOfCode2021
             }
             if (count1 >= count0) return '1';
             else return '0';
+        }
+        #endregion
+
+        #region Day04
+        class Day04Grid
+        {
+            public Day04Grid(List<List<int>> input)
+            {
+                rows = input;
+                for (int i = 0; i < input.First().Count; i++)
+                {
+                    cols.Add(new List<int>());
+                    foreach (var item in input)
+                        cols.Last().Add(item[i]);
+                }
+            }
+            List<List<int>> rows = new List<List<int>>();
+            List<List<int>> cols = new List<List<int>>();
+
+            internal bool HitTest(List<int> nums)
+            {
+                foreach (var row in rows)
+                    if (row.Where(x => nums.Contains(x)).Count() == row.Count)
+                        return true;
+
+                foreach (var col in cols)
+                    if (col.Where(x => nums.Contains(x)).Count() == col.Count)
+                        return true;
+
+                return false;
+            }
+
+            internal List<int> GetUnmarked(List<int> nums)
+                => rows.SelectMany(x => x.Where(y => nums.Contains(y) == false)).ToList();
+        }
+        private static string Day04_1SolveMethod(IEnumerable<string> lines)
+        {
+            var series = lines.First().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(x => int.Parse(x)).ToList();
+
+            var grids_Rows = new List<List<List<int>>>();
+            grids_Rows.Add(new List<List<int>>());
+            foreach (var line in lines)
+            {
+                if (line.Contains(',')) continue;
+                if (string.IsNullOrWhiteSpace(line)) continue;
+                if (grids_Rows.Last().Count >= 5)
+                {
+                    grids_Rows.Add(new List<List<int>>());
+                }
+                grids_Rows.Last().Add(line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(x => int.Parse(x)).ToList());
+            }
+            var grids = grids_Rows.Select(x => new Day04Grid(x)).ToList();
+
+            for (int i = 0; i < series.Count; i++)
+            {
+                var nums = series.Take(i + 1).ToList();
+                foreach (var grid in grids)
+                {
+                    if (grid.HitTest(nums))
+                    {
+                        var sumOfUnmarked = grid.GetUnmarked(nums).Sum();
+                        var lastNum = series[i];
+                        return (sumOfUnmarked * lastNum).ToString();
+                    }
+                }
+            }
+            return "?";
+        }
+        private static string Day04_2SolveMethod(IEnumerable<string> lines)
+        {
+            var series = lines.First().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(x => int.Parse(x)).ToList();
+
+            var grids_Rows = new List<List<List<int>>>();
+            grids_Rows.Add(new List<List<int>>());
+            foreach (var line in lines)
+            {
+                if (line.Contains(',')) continue;
+                if (string.IsNullOrWhiteSpace(line)) continue;
+                if (grids_Rows.Last().Count >= 5)
+                {
+                    grids_Rows.Add(new List<List<int>>());
+                }
+                grids_Rows.Last().Add(line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(x => int.Parse(x)).ToList());
+            }
+            var grids = grids_Rows.Select(x => new Day04Grid(x)).ToList();
+            var winned = new List<Day04Grid>();
+
+            var nums = new List<int>();
+            for (int i = 0; i < series.Count; i++)
+            {
+                nums = series.Take(i + 1).ToList();
+                foreach (var grid in grids)
+                {
+                    if (winned.Contains(grid)) continue;
+                    if (grid.HitTest(nums))
+                        winned.Add(grid);
+                }
+                var lastNum = series[i];
+                if (winned.Count == grids.Count)
+                    break;
+            }
+
+            var sumOfUnmarked = winned.Last().GetUnmarked(nums).Sum();
+            return (sumOfUnmarked * nums.Last()).ToString();
+
         }
         #endregion
 
