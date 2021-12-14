@@ -102,5 +102,8 @@
   <ItemGroup>
     <EmbeddedResource Include="TestInputs\Day02TestInput.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestInputs\Day03TestInput.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
