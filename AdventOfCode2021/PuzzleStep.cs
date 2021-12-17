@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -41,8 +42,9 @@ namespace AdventOfCode2021
         {
             try
             {
-                if (SolvePartOne(TestInput) == PartOneTestOutput) return "Success";
-                else return "Failed!";
+                var testResult = SolvePartOne(TestInput);
+                if (testResult == PartOneTestOutput) return $"Success ({testResult})";
+                else return $"Failed! ({testResult})";
             }
             catch (Exception ex) { return $"Error: {ex.Message}!"; }
         }
@@ -50,8 +52,9 @@ namespace AdventOfCode2021
         {
             try
             {
-                if (SolvePartTwo(TestInput) == PartTwoTestOutput) return "Success";
-                else return "Failed!";
+                var testResult = SolvePartTwo(TestInput);
+                if (testResult == PartTwoTestOutput) return $"Success ({testResult})";
+                else return $"Failed! ({testResult})";
             }
             catch (Exception ex) { return $"Error: {ex.Message}!"; }
         }
@@ -61,13 +64,13 @@ namespace AdventOfCode2021
             using (Stream stream = typeof(PuzzleStep).Assembly.GetManifestResourceStream($"AdventOfCode2021.TestInputs.{resourceName}.txt"))
             using (StreamReader reader = new StreamReader(stream))
             {
-                var lines = new List<string>();
+                var inputLines = new List<string>();
                 var line = default(string);
                 while ((line = reader.ReadLine()) != null)
                 {
-                    lines.Add(line);
+                    inputLines.Add(line);
                 }
-                return lines;
+                return inputLines;
             }
         }
         internal static List<PuzzleStep> Create()
@@ -77,14 +80,15 @@ namespace AdventOfCode2021
             output.Add(new PuzzleStep(02, Day02_1SolveMethod, Day02_2SolveMethod, LoadTestInput("Day02TestInput"), "150", "900", "Dive!"));
             output.Add(new PuzzleStep(03, Day03_1SolveMethod, Day03_2SolveMethod, LoadTestInput("Day03TestInput"), "198", "230", "Binary Diagnostic"));
             output.Add(new PuzzleStep(04, Day04_1SolveMethod, Day04_2SolveMethod, LoadTestInput("Day04TestInput"), "4512", "1924", "Giant Squid"));
+            output.Add(new PuzzleStep(05, Day05_1SolveMethod, Day05_2SolveMethod, LoadTestInput("Day05TestInput"), "5", "12", "Hydrothermal Venture"));
             return output;
         }
 
         #region general
-        private static List<int> ToDigits(IEnumerable<string> lines)
+        private static List<int> ToDigits(IEnumerable<string> inputLines)
         {
             var digits = new List<int>();
-            foreach (var line in lines)
+            foreach (var line in inputLines)
             {
                 if (string.IsNullOrWhiteSpace(line)) continue;
                 if (int.TryParse(line, out var digit) == false) continue;
@@ -107,17 +111,93 @@ namespace AdventOfCode2021
             }
             return increases;
         }
+
+        class Line
+        {
+            public static List<Line> CreateLines(IEnumerable<string> input)
+            {
+                var lines = new List<Line>();
+                foreach (var inputLine in input)
+                {
+                    var line = Line.CreateLine(inputLine);
+                    if (line != null)
+                        lines.Add(line);
+                }
+                return lines;
+            }
+            public static Line CreateLine(string input)
+            {
+                if (string.IsNullOrWhiteSpace(input)) return null;
+                var points = input.Split(new string[] { "->" }, StringSplitOptions.RemoveEmptyEntries);
+                return new Line(CreatePoint(points[0]), CreatePoint(points[1]));
+            }
+            private static Point CreatePoint(string input)
+            {
+                var splited = input.Split(',');
+                return new Point(int.Parse(splited[0]), int.Parse(splited[1]));
+            }
+
+            public Line(Point p1, Point p2)
+            {
+                P1 = p1;
+                P2 = p2;
+                //---------------
+                if (P1.Y == P2.Y)
+                {
+                    Points = new List<Point>();
+                    for (int x = Math.Min(P1.X, P2.X); x <= Math.Max(P1.X, P2.X); x++)
+                        Points.Add(new Point(x, P1.Y));
+                }
+                else if (P1.X == P2.X)
+                {
+                    Points = new List<Point>();
+                    for (int y = Math.Min(P1.Y, P2.Y); y <= Math.Max(P1.Y, P2.Y); y++)
+                        Points.Add(new Point(P1.X, y));
+                }
+                else
+                {
+                    var m = ((double)(P1.Y - P2.Y)) / ((double)(P1.X - P2.X));
+                    var c = P1.Y - P1.X * m;
+                    //--------------
+                    var points = new Dictionary<string, Point>();
+                    for (int x = Math.Min(P1.X, P2.X); x <= Math.Max(P1.X, P2.X); x++)
+                    {
+                        var y = (int)((m * x) + c);
+                        var pointKey = $"{x},{y}";
+                        if (points.ContainsKey(pointKey) == false)
+                            points.Add(pointKey, new Point(x, y));
+                    }
+                    Points = points.Values.ToList();
+                }
+            }
+
+            public Point P1 { get; private set; }
+            public Point P2 { get; private set; }
+            public List<Point> Points { get; internal set; }
+            public bool IsHorizontal => P1.Y == P2.Y;
+            public bool IsVertical => P1.X == P2.X;
+            public bool Is45Degree => Math.Abs(P1.X - P2.X) == Math.Abs(P1.Y - P2.Y);
+
+            public override string ToString()
+            {
+                if (IsHorizontal) return $"{P1} > {P2} Horizontal ({string.Join(", ", Points)})";
+                else if (IsVertical) return $"{P1} > {P2} Vertical ({string.Join(", ", Points)})";
+                else if (Is45Degree) return $"{P1} > {P2} 45Degree ({string.Join(", ", Points)})";
+                else return $"{P1} > {P2} ({string.Join(", ", Points)})";
+            }
+        }
+
         #endregion
 
         #region Day01
-        private static string Day01_1SolveMethod(IEnumerable<string> lines)
+        private static string Day01_1SolveMethod(IEnumerable<string> inputLines)
         {
-            var digits = ToDigits(lines);
+            var digits = ToDigits(inputLines);
             return CountIncreases(digits).ToString();
         }
-        private static string Day01_2SolveMethod(IEnumerable<string> lines)
+        private static string Day01_2SolveMethod(IEnumerable<string> inputLines)
         {
-            var digits = ToDigits(lines);
+            var digits = ToDigits(inputLines);
             var slidings = new List<int>();
             for (int i = 0; i < digits.Count - 2; i++)
             {
@@ -129,11 +209,11 @@ namespace AdventOfCode2021
         #endregion
 
         #region Day02
-        private static string Day02_1SolveMethod(IEnumerable<string> lines)
+        private static string Day02_1SolveMethod(IEnumerable<string> inputLines)
         {
             var forwardTotal = 0;
             var depth = 0;
-            foreach (var line in lines)
+            foreach (var line in inputLines)
             {
                 if (line.StartsWith("forward"))
                 {
@@ -151,12 +231,12 @@ namespace AdventOfCode2021
             }
             return (forwardTotal * depth).ToString();
         }
-        private static string Day02_2SolveMethod(IEnumerable<string> lines)
+        private static string Day02_2SolveMethod(IEnumerable<string> inputLines)
         {
             var forwardTotal = 0;
             var aim = 0;
             var depth = 0;
-            foreach (var line in lines)
+            foreach (var line in inputLines)
             {
                 if (line.StartsWith("forward"))
                 {
@@ -181,10 +261,10 @@ namespace AdventOfCode2021
         #endregion
 
         #region Day03
-        private static string Day03_1SolveMethod(IEnumerable<string> lines)
+        private static string Day03_1SolveMethod(IEnumerable<string> inputLines)
         {
             var HighCounts = new List<int>();
-            foreach (var line in lines)
+            foreach (var line in inputLines)
             {
                 for (int i = 0; i < line.Length; i++)
                 {
@@ -197,7 +277,7 @@ namespace AdventOfCode2021
             var epsilonRate = "";
             for (int i = 0; i < HighCounts.Count; i++)
             {
-                if (HighCounts[i] > lines.Count() - HighCounts[i]) { gammaRate += "1"; epsilonRate += "0"; }
+                if (HighCounts[i] > inputLines.Count() - HighCounts[i]) { gammaRate += "1"; epsilonRate += "0"; }
                 else { gammaRate += "0"; epsilonRate += "1"; }
             }
 
@@ -208,11 +288,11 @@ namespace AdventOfCode2021
             return (gammaRateDigit * epsilonRateDigit).ToString();
 
         }
-        private static string Day03_2SolveMethod(IEnumerable<string> lines)
+        private static string Day03_2SolveMethod(IEnumerable<string> inputLines)
         {
-            if (lines.Count() == 0) return "";
-            var maxlength = lines.First().Trim().Length;
-            var miror = lines.ToList();
+            if (inputLines.Count() == 0) return "";
+            var maxlength = inputLines.First().Trim().Length;
+            var miror = inputLines.ToList();
             var col = 0;
             while (col > maxlength || miror.Count > 1)
             {
@@ -223,7 +303,7 @@ namespace AdventOfCode2021
             var oxygenRating = Convert.ToInt32(miror[0], 2);
 
 
-            miror = lines.ToList();
+            miror = inputLines.ToList();
             col = 0;
             while (col > maxlength || miror.Count > 1)
             {
@@ -284,13 +364,13 @@ namespace AdventOfCode2021
             internal List<int> GetUnmarked(List<int> nums)
                 => rows.SelectMany(x => x.Where(y => nums.Contains(y) == false)).ToList();
         }
-        private static string Day04_1SolveMethod(IEnumerable<string> lines)
+        private static string Day04_1SolveMethod(IEnumerable<string> inputLines)
         {
-            var series = lines.First().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(x => int.Parse(x)).ToList();
+            var series = inputLines.First().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(x => int.Parse(x)).ToList();
 
             var grids_Rows = new List<List<List<int>>>();
             grids_Rows.Add(new List<List<int>>());
-            foreach (var line in lines)
+            foreach (var line in inputLines)
             {
                 if (line.Contains(',')) continue;
                 if (string.IsNullOrWhiteSpace(line)) continue;
@@ -317,13 +397,13 @@ namespace AdventOfCode2021
             }
             return "?";
         }
-        private static string Day04_2SolveMethod(IEnumerable<string> lines)
+        private static string Day04_2SolveMethod(IEnumerable<string> inputLines)
         {
-            var series = lines.First().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(x => int.Parse(x)).ToList();
+            var series = inputLines.First().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(x => int.Parse(x)).ToList();
 
             var grids_Rows = new List<List<List<int>>>();
             grids_Rows.Add(new List<List<int>>());
-            foreach (var line in lines)
+            foreach (var line in inputLines)
             {
                 if (line.Contains(',')) continue;
                 if (string.IsNullOrWhiteSpace(line)) continue;
@@ -357,12 +437,59 @@ namespace AdventOfCode2021
         }
         #endregion
 
+        #region Day05
+        private static string Day05_1SolveMethod(IEnumerable<string> inputLines)
+        {
+            var lines = Line.CreateLines(inputLines);
+            var points = new Dictionary<string, Point>();
+            var pointsCounter = new Dictionary<string, int>();
+            foreach (var line in lines)
+                if (line.IsHorizontal || line.IsVertical)
+                    foreach (var point in line.Points)
+                    {
+                        var pointKey = $"{point.X},{point.Y}";
+
+                        if (points.ContainsKey(pointKey) == false)
+                        {
+                            points.Add(pointKey, point);
+                            pointsCounter.Add(pointKey, 0);
+                        }
+                        pointsCounter[pointKey]++;
+                    }
+
+            return pointsCounter.Where(x => x.Value >= 2).Count().ToString();
+        }
+        private static string Day05_2SolveMethod(IEnumerable<string> inputLines)
+        {
+            var lines = Line.CreateLines(inputLines);
+            var points = new Dictionary<string, Point>();
+            var pointsCounter = new Dictionary<string, int>();
+            foreach (var line in lines)
+            {
+                if (line.IsHorizontal || line.IsVertical || line.Is45Degree)
+                    foreach (var point in line.Points)
+                    {
+                        var pointKey = $"{point.X},{point.Y}";
+
+                        if (points.ContainsKey(pointKey) == false)
+                        {
+                            points.Add(pointKey, point);
+                            pointsCounter.Add(pointKey, 0);
+                        }
+                        pointsCounter[pointKey]++;
+                    }
+            }
+
+            return pointsCounter.Where(x => x.Value >= 2).Count().ToString();
+        }
+        #endregion
+
         //#region DayXX
-        //private static string DayXX_1SolveMethod(IEnumerable<string> lines)
+        //private static string DayXX_1SolveMethod(IEnumerable<string> inputLines)
         //{
         //    throw new NotImplementedException();
         //}
-        //private static string DayXX_2SolveMethod(IEnumerable<string> lines)
+        //private static string DayXX_2SolveMethod(IEnumerable<string> inputLines)
         //{
         //    throw new NotImplementedException();
 
