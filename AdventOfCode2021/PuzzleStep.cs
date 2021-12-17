@@ -81,6 +81,7 @@ namespace AdventOfCode2021
             output.Add(new PuzzleStep(03, Day03_1SolveMethod, Day03_2SolveMethod, LoadTestInput("Day03TestInput"), "198", "230", "Binary Diagnostic"));
             output.Add(new PuzzleStep(04, Day04_1SolveMethod, Day04_2SolveMethod, LoadTestInput("Day04TestInput"), "4512", "1924", "Giant Squid"));
             output.Add(new PuzzleStep(05, Day05_1SolveMethod, Day05_2SolveMethod, LoadTestInput("Day05TestInput"), "5", "12", "Hydrothermal Venture"));
+            output.Add(new PuzzleStep(06, Day06_1SolveMethod, Day06_2SolveMethod, LoadTestInput("Day06TestInput"), "5934", "26984457539", "Lanternfish"));
             return output;
         }
 
@@ -481,6 +482,71 @@ namespace AdventOfCode2021
             }
 
             return pointsCounter.Where(x => x.Value >= 2).Count().ToString();
+        }
+        #endregion
+
+        #region Day06
+        //public class Lanternfish
+        //{
+        //    public Lanternfish(int timer)
+        //    {
+        //        Timer = timer;
+        //    }
+        //    public int Timer { get; private set; }
+
+        //    public bool DayPassed()
+        //    {
+        //        Timer--;
+        //        if (Timer == -1)
+        //        {
+        //            Timer = 6;
+        //            return true;
+        //        }
+        //        else return false;
+        //    }
+        //    public override string ToString() => $"fish({Timer})";
+
+        //}
+        private static Dictionary<int, long> CreateNewLanternfishTimers()
+        {
+            var timers = new Dictionary<int, long>();
+            for (int i = 0; i <= 8; i++)
+                timers.Add(i, 0);
+            return timers;
+        }
+        public static long ProduceLanternfish2(List<int> initialstate, int days)
+        {
+            var timers = CreateNewLanternfishTimers();
+            foreach (var item in initialstate)
+                timers[item]++;
+
+            for (int day = 0; day < days; day++)
+            {
+                var newTimers = CreateNewLanternfishTimers();
+                foreach (var timer in timers)
+                {
+                    if (timer.Value == 0) continue;
+                    if (timer.Key == 0)
+                    {
+                        newTimers[6] += timer.Value;
+                        newTimers[8] += timer.Value;
+                    }
+                    else
+                    {
+                        newTimers[timer.Key - 1] += timer.Value;
+                    }
+                }
+                timers = newTimers;
+            }
+            return timers.Values.Sum();
+        }
+        private static string Day06_1SolveMethod(IEnumerable<string> inputLines)
+        {
+            return ProduceLanternfish2(ToDigits(inputLines.First().Split(',')), 80).ToString();
+        }
+        private static string Day06_2SolveMethod(IEnumerable<string> inputLines)
+        {
+            return ProduceLanternfish2(ToDigits(inputLines.First().Split(',')), 256).ToString();
         }
         #endregion
 
