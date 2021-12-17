@@ -82,6 +82,7 @@ namespace AdventOfCode2021
             output.Add(new PuzzleStep(04, Day04_1SolveMethod, Day04_2SolveMethod, LoadTestInput("Day04TestInput"), "4512", "1924", "Giant Squid"));
             output.Add(new PuzzleStep(05, Day05_1SolveMethod, Day05_2SolveMethod, LoadTestInput("Day05TestInput"), "5", "12", "Hydrothermal Venture"));
             output.Add(new PuzzleStep(06, Day06_1SolveMethod, Day06_2SolveMethod, LoadTestInput("Day06TestInput"), "5934", "26984457539", "Lanternfish"));
+            output.Add(new PuzzleStep(07, Day07_1SolveMethod, Day07_2SolveMethod, LoadTestInput("Day07TestInput"), "37", "168", "The Treachery of Whales"));
             return output;
         }
 
@@ -547,6 +548,47 @@ namespace AdventOfCode2021
         private static string Day06_2SolveMethod(IEnumerable<string> inputLines)
         {
             return ProduceLanternfish2(ToDigits(inputLines.First().Split(',')), 256).ToString();
+        }
+        #endregion
+
+        #region Day07
+        private static string Day07_1SolveMethod(IEnumerable<string> inputLines)
+        {
+            var digits = ToDigits(inputLines.First().Split(','));
+
+            var min = digits.Min();
+            var max = digits.Max();
+            var minCost = long.MaxValue;
+            for (int i = min; i <= max; i++)
+            {
+                var cost = 0;
+                foreach (var digit in digits)
+                {
+                    cost += Math.Abs(digit - i);
+                }
+                minCost = Math.Min(minCost, cost);
+            }
+            return minCost.ToString();
+        }
+        private static string Day07_2SolveMethod(IEnumerable<string> inputLines)
+        {
+            var digits = ToDigits(inputLines.First().Split(','));
+
+            var min = digits.Min();
+            var max = digits.Max();
+            var minCost = long.MaxValue;
+            for (int i = min; i <= max; i++)
+            {
+                var cost = 0;
+                foreach (var digit in digits)
+                {
+                    var change = Math.Abs(digit - i);
+                    for (int j = 0; j < change; j++)
+                        cost += (j + 1);
+                }
+                minCost = Math.Min(minCost, cost);
+            }
+            return minCost.ToString();
         }
         #endregion
 
